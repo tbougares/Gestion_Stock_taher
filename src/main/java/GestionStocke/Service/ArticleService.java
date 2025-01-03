@@ -29,4 +29,6 @@ public interface ArticleService  {
 	  void delete(Integer id);
 
 	List<ArticleDto> getArticleByCodeBarre(String codeBarre);
-}
+	
+    public List<ArticleDto> searchByModeles(List<String> modeles);
+    }

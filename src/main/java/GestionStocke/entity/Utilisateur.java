@@ -39,7 +39,7 @@ public class Utilisateur extends AuditModel implements UserDetails {
 
 
 	@Enumerated(EnumType.STRING)
-	private  Role   role ;
+	private Role role ;
 
 
 	@OneToMany(mappedBy = "user")

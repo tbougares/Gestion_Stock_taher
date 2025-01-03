@@ -11,11 +11,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -41,14 +43,15 @@ import org.springframework.core.io.Resource;
 
 @RestController
 @RequestMapping("articles")
+@CrossOrigin(origins = "http://localhost:4200")
 public class ArticleController {
 
 	private final ArticleService articleService;
 	
 	private final CategoryRepository categoryRepository ;
 	
-	@Autowired
-	FileUpload FileUpload;
+
+	FileUpload fileUpload;
 	
 	//@Autowired
 	Articlerepository Articlerepository;
@@ -57,15 +60,16 @@ public class ArticleController {
 
 	 private FileFilter fileFilter;
 
-    public ArticleController(ArticleService articleService, CategoryRepository categoryRepository) {
+    public ArticleController(ArticleService articleService, CategoryRepository categoryRepository,FileUpload FileUpload) {
         this.articleService = articleService;
+        this.fileUpload = FileUpload;
         this.categoryRepository = categoryRepository;
     }
 
     @GetMapping("/images/{fileName:.+}")
 	    public ResponseEntity<?> serveFile(@PathVariable String fileName) {
 	        try {
-	            Resource file = FileUpload.loadFileAsResource(fileName,"Articles");
+	            Resource file = fileUpload.loadFileAsResource(fileName,"Articles");
 	            return ResponseEntity.ok().body(file);
 	        } catch (Exception e) {
 	        	return new ResponseEntity<String>("Not Found",HttpStatus.NOT_FOUND);
@@ -94,7 +98,7 @@ public class ArticleController {
 	    String timestamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
 	    String fileName =  timestamp+"_"+file.getOriginalFilename();
 		String uploadDir = "Articles/";
-		FileUpload.saveFile(uploadDir, fileName, file);
+		fileUpload.saveFile(uploadDir, fileName, file);
 		articleDto.setPhoto(fileName);
 		 Category category = categoryRepository.findById(categoryId).orElseThrow();
 		 articleDto.setCategory(CategoryDto.fromEntity(category)); 
@@ -126,6 +130,17 @@ public class ArticleController {
     ) {
         return ResponseEntity.ok(articleService.findAll());
     }
+	
+	
+	// Rechercher des articles par plusieurs modèles
+    @PostMapping("/searchByModeles")
+    public ResponseEntity<List<ArticleDto>> searchByModeles(@RequestBody List<String> modeles) {
+        List<ArticleDto> articles = articleService.searchByModeles(modeles);
+        return ResponseEntity.ok(articles); // Retourne la liste des DTOs
+    }
+	
+	
+	
 	@GetMapping("/historique/vente/{idArticle}")
 	public ResponseEntity<List<LigneVenteDto>> findHistoriqueVentes(
 			@PathVariable("idArticle") Integer idArticle

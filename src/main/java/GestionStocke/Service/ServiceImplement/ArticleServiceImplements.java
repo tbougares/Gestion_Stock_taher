@@ -7,6 +7,9 @@ import java.util.stream.Collectors;
 
 import GestionStocke.utiles.BarcodeGenerator;
 import com.google.zxing.WriterException;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import GestionStocke.DTO.ArticleDto;
@@ -18,11 +21,13 @@ import GestionStocke.Exception.ErrorCodes;
 import GestionStocke.Exception.InvalidEntityException;
 import GestionStocke.Exception.InvalidOperationException;
 import GestionStocke.Service.ArticleService;
+import GestionStocke.Specification.ArticleSpecification;
 import GestionStocke.Validator.ArticleValidator;
 import GestionStocke.entity.Article;
 import GestionStocke.entity.LigneCommandeClient;
 import GestionStocke.entity.LigneCommandeFornisseur;
 import GestionStocke.entity.LigneVente;
+import GestionStocke.entity.ModeleVoiture;
 import GestionStocke.repostory.Articlerepository;
 import GestionStocke.repostory.CategoryRepository;
 import GestionStocke.repostory.LigneCommandeFornisseurRepository;
@@ -66,7 +71,7 @@ public class ArticleServiceImplements implements ArticleService {
 			try {
 				BarcodeGenerator.generateBarcodeImage(
 						savedArticle.getCodeBarre(),
-						"C:/Users/Nabil Daghbari/eclipse-workspace/dossier/dossier/free/codeBarre" + savedArticle.getId() + ".png"
+						"C:\\Users\\ASUS\\eclipse-workspace\\code" + savedArticle.getId() + ".png"
 				);
 			} catch (WriterException | IOException e) {
 				e.printStackTrace();
@@ -131,6 +136,34 @@ public class ArticleServiceImplements implements ArticleService {
 	        .map(ArticleDto::fromEntity)
 	        .collect(Collectors.toList());
 	  }
+		@Override
+		// Recherche des articles par plusieurs modèles de voiture
+	    public List<ArticleDto> searchByModeles(List<String> modeles) {
+	        // Applique la spécification pour rechercher par plusieurs modèles
+	        Specification<Article> spec = ArticleSpecification.hasModeles(modeles);
+	        List<Article> articles = articleRepository.findAll(spec);
+
+	        // Convertir les entités en DTOs
+	        return articles.stream()
+	                .map(this::convertToDTO)
+	                .collect(Collectors.toList());
+	    }
+
+	    // Méthode pour convertir un Article en ArticleDTO
+	    private ArticleDto convertToDTO(Article article) {
+	        // Mapper les champs simples
+	    	ModelMapper modelMapper = new ModelMapper();
+	        ArticleDto articleDTO = modelMapper.map(article, ArticleDto.class);
+
+	        // Mapper les modèles de voiture manuellement si nécessaire
+	        articleDTO.setModelesVoiture(
+	            article.getModelesVoiture().stream()
+	                .map(ModeleVoiture::getNomModele) // Récupère uniquement le nom des modèles
+	                .collect(Collectors.toList())
+	        );
+
+	        return articleDTO;
+	    }
 /*
 	  @Override
 	  public List<LigneVenteDto> findHistoriqueVentes(Integer idArticle) {
@@ -192,4 +225,6 @@ public class ArticleServiceImplements implements ArticleService {
 		        .map(LigneVenteDto::fromEntity)
 		        .collect(Collectors.toList());
 	}
+
+
 }

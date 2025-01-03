@@ -1,14 +1,19 @@
 package GestionStocke.DTO;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import GestionStocke.entity.Article;
 import GestionStocke.entity.Category;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Builder
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class ArticleDto {
 	private Integer id;
 	private String codeArticle;
@@ -31,7 +36,11 @@ public class ArticleDto {
 
 	private String codeBarre;
 
+	private String marqueVoiure;
 
+    private List<String> modelesVoiture;
+	
+	private Boolean status;
 	public static ArticleDto fromEntity(Article article) {
 		return ArticleDto.builder()
 				.id(article.getId())
@@ -44,7 +53,9 @@ public class ArticleDto {
 				.seuilQuantite(article.getSeuilQuantite())
 				.codeBarre(article.getCodeBarre())
 				.quantite(article.getQuantite())
+				
 				.category(CategoryDto.fromEntity(article.getCategory()))
+				
 				.build();
 				
 	

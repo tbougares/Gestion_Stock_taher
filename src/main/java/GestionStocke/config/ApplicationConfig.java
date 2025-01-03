@@ -59,21 +59,11 @@ public class ApplicationConfig {
     public CorsFilter corsFilter() {
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         final CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(true);
-        config.setAllowedOrigins(Collections.singletonList("http://localhost:4200"));
-        config.setAllowedHeaders(Arrays.asList(
-                ORIGIN,
-                CONTENT_TYPE,
-                ACCEPT,
-                AUTHORIZATION
-        ));
-        config.setAllowedMethods(Arrays.asList(
-                GET.name(),
-                POST.name(),
-                DELETE.name(),
-                PUT.name(),
-                PATCH.name()
-        ));
+        config.setAllowCredentials(true); // Allow credentials like cookies or Authorization headers
+        config.setAllowedOrigins(Collections.singletonList("http://localhost:4200")); // Allow Angular app
+        config.setAllowedHeaders(Arrays.asList("*")); // Allow all headers
+        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")); // Allow HTTP methods
+
         source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);
 

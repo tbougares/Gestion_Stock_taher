@@ -5,6 +5,7 @@ import java.time.Instant;
 import java.util.Date;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -30,12 +31,12 @@ public class AuditModel implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
-/*	@Column(name = "date_creation", nullable = false)
 
-	@CreationTimestamp
+	@Column(name = "date_creation", nullable = false , updatable = false)
+	@CreatedDate
 	private Date dateCreation;
 	@LastModifiedDate
 	@Column(name = "LastModifierDate")
 	@JsonIgnore
-	private Instant ModifierDate;*/
+	private Instant ModifierDate;
 }

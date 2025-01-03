@@ -2,11 +2,15 @@ package GestionStocke.entity;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotBlank;
@@ -44,9 +48,22 @@ public class Article extends AuditModel {
 
 	@Column(name = "code_barre")
 	private String codeBarre;
+	
+	 @ManyToMany
+	    @JoinTable(
+	        name = "article_modele",
+	        joinColumns = @JoinColumn(name = "article_id"),
+	        inverseJoinColumns = @JoinColumn(name = "modele_id")
+	    )
+	    private Set<ModeleVoiture> modelesVoiture = new HashSet<>();
+	
+	@Column (name="status")
+	private Boolean status;
+	
+	@Column (name="marqueVoiure")
+	private String marqueVoiure;
 
-
-
+	@Column (name="photo")
 	private String photo;
 
 	@Column(name = "identreprise")

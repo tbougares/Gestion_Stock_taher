@@ -17,7 +17,11 @@
 		<java.version>17</java.version>
 	</properties>
 	<dependencies>
-
+<dependency>
+    <groupId>org.modelmapper</groupId>
+    <artifactId>modelmapper</artifactId>
+    <version>3.1.1</version> <!-- Use the latest version -->
+</dependency>
 		<dependency>
 			<groupId>com.google.zxing</groupId>
 			<artifactId>core</artifactId>
